@@ -4,8 +4,8 @@ import MediumArticles from '../components/MediumArticles.astro';
 
 // ── EDIT THESE ──────────────────────────────────────────────────────────────
 const NAME        = 'Deby Silvia Agnes';
-const ROLE        = 'Developer & Writer';
-const BIO         = `I am a Backend Engineer who is curious to explore and likes writing articles and solve problems.`;
+const ROLE        = 'Product Engineer (Backend) & Writer';
+const BIO         = `I am a Backend Engineer who is curious to explore, enjoys writing articles, and loves solving problems.`;
 const MEDIUM_USER = 'debbysa23'; // without the @
 
 const LINKS = [
@@ -24,7 +24,7 @@ const LINKS = [
     <span class="nav-name">{NAME}</span>
     <nav>
       <a href="#about">About</a>
-      <a href="#writing">Writing</a>
+      <a href="#my-articles">My Articles</a>
     </nav>
   </header>
 
@@ -32,16 +32,21 @@ const LINKS = [
 
     <!-- Hero -->
     <section class="hero" id="hero">
-      <p class="hero-eyebrow">Hello, I'm</p>
-      <h1 class="hero-name">{NAME}</h1>
-      <p class="hero-role">{ROLE}</p>
-      <p class="hero-bio">{BIO}</p>
-      <div class="hero-links">
-        {LINKS.map(l => (
-          <a class="link-pill" href={l.href} target="_blank" rel="noopener noreferrer">
-            {l.label}
-          </a>
-        ))}
+      <div class="hero-inner">
+        <img class="hero-photo" src="/profile.jpg" alt="Deby Silvia Agnes" />
+        <div class="hero-text">
+          <p class="hero-eyebrow">Hello, I'm</p>
+          <h1 class="hero-name">{NAME}</h1>
+          <p class="hero-role">{ROLE}</p>
+          <p class="hero-bio">{BIO}</p>
+          <div class="hero-links">
+            {LINKS.map(l => (
+              <a class="link-pill" href={l.href} target="_blank" rel="noopener noreferrer">
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
 
@@ -49,8 +54,9 @@ const LINKS = [
     <section class="about" id="about">
       <h2 class="section-title">About</h2>
       <p class="about-text">
-        Feel free to replace this section with a short bio, your tech stack,
-        current projects, or anything you'd like visitors to know about you.
+        I am a software engineer with a strong focus on backend development, specializing in Golang and PostgreSQL. I enjoy leveraging Golang's efficiency and PostgreSQL’s powerful capabilities to create scalable, reliable systems.
+        I also have a solid background in JavaScript, Typescript, and Node.js.
+        Besides coding, I like writing and sharing insights on Medium, discussing software engineering topics, my code experience, and my current learning. I’m always eager to connect with others in the tech community and exchange ideas on building better software.
       </p>
     </section>
 
@@ -65,6 +71,35 @@ const LINKS = [
 </Base>
 
 <style>
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-photo {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .hero-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .hero-photo {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
   /* ── grain overlay ── */
   .grain {
     pointer-events: none;
@@ -114,7 +149,7 @@ const LINKS = [
   .container {
     max-width: var(--max-w);
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
   }
 
   /* ── hero ── */
@@ -124,7 +159,7 @@ const LINKS = [
   }
 
   .hero-eyebrow {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -150,7 +185,7 @@ const LINKS = [
   }
 
   .hero-bio {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--muted);
     max-width: 480px;
     line-height: 1.8;
@@ -196,7 +231,7 @@ const LINKS = [
   .about-text {
     font-size: 0.9rem;
     color: var(--muted);
-    max-width: 540px;
+    max-width: 1280px;
     line-height: 1.8;
   }
 
