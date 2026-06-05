@@ -1,0 +1,224 @@
+---
+import Base from '../layouts/Base.astro';
+import MediumArticles from '../components/MediumArticles.astro';
+
+// ── EDIT THESE ──────────────────────────────────────────────────────────────
+const NAME        = 'Deby Silvia Agnes';
+const ROLE        = 'Developer & Writer';
+const BIO         = `I am a Backend Engineer who is curious to explore and likes writing articles and solve problems.`;
+const MEDIUM_USER = 'debbysa23'; // without the @
+
+const LINKS = [
+  { label: 'GitHub',   href: 'https://github.com/debbysa' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/debysilviaagnes/' },
+  { label: 'Medium',   href: `https://medium.com/@debbysa23` },
+  { label: 'Email',    href: 'mailto:debysilviaagnes@gmail.com' },
+];
+// ─────────────────────────────────────────────────────────────────────────────
+---
+
+<Base title={NAME} description={BIO}>
+  <div class="grain"></div>
+
+  <header class="nav">
+    <span class="nav-name">{NAME}</span>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#writing">Writing</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <p class="hero-eyebrow">Hello, I'm</p>
+      <h1 class="hero-name">{NAME}</h1>
+      <p class="hero-role">{ROLE}</p>
+      <p class="hero-bio">{BIO}</p>
+      <div class="hero-links">
+        {LINKS.map(l => (
+          <a class="link-pill" href={l.href} target="_blank" rel="noopener noreferrer">
+            {l.label}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- About / Skills (optional quick section) -->
+    <section class="about" id="about">
+      <h2 class="section-title">About</h2>
+      <p class="about-text">
+        Feel free to replace this section with a short bio, your tech stack,
+        current projects, or anything you'd like visitors to know about you.
+      </p>
+    </section>
+
+    <!-- Medium Articles -->
+    <MediumArticles username={MEDIUM_USER} />
+
+  </main>
+
+  <footer class="footer">
+    <p>Built with <a href="https://astro.build" target="_blank">Astro</a> · Hosted on GitHub Pages</p>
+  </footer>
+</Base>
+
+<style>
+  /* ── grain overlay ── */
+  .grain {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* ── nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(14,14,14,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .nav nav {
+    display: flex;
+    gap: 1.8rem;
+  }
+
+  .nav nav a {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+
+  .nav nav a:hover { color: var(--text); }
+
+  /* ── layout ── */
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── hero ── */
+  .hero {
+    padding: 7rem 0 4rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 8vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .hero-role {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-bio {
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .link-pill {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .link-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* ── about ── */
+  .about { padding: 2rem 0 0; }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .about-text {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.8;
+  }
+
+  /* ── footer ── */
+  .footer {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .footer a { color: var(--accent); }
+
+  /* ── animation ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .nav { padding: 0.8rem 1rem; }
+    .hero { padding: 4rem 0 3rem; }
+  }
+</style>
