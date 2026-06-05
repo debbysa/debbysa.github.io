@@ -1,0 +1,230 @@
+---
+interface Props {
+  username: string;
+}
+const { username } = Astro.props;
+---
+
+<section class="articles" id="writing">
+  <h2 class="section-title">Writing</h2>
+  <div class="cards" id="medium-cards">
+    <div class="loading">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+  </div>
+  <a
+    class="view-all"
+    href={`https://medium.com/@${username}`}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    All articles on Medium →
+  </a>
+</section>
+
+<script define:vars={{ username }}>
+  async function loadArticles() {
+    const container = document.getElementById('medium-cards');
+    try {
+      const rssUrl = `https://medium.com/feed/@${username}`;
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+
+      if (!data.items?.length) throw new Error('No articles found');
+
+      container.innerHTML = data.items.slice(0, 6).map((item) => {
+        const date = new Date(item.pubDate).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric'
+        });
+
+        // Strip all HTML tags, then remove "Photo by ... on Unsplash" pattern
+        const rawText = item.description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        const cleaned = rawText
+          .replace(/Photo by .+? on Unsplash\s*/gi, '')
+          .replace(/Image by .+? on Unsplash\s*/gi, '')
+          .trim();
+        const desc = cleaned.slice(0, 140) + (cleaned.length > 140 ? '…' : '');
+
+        const thumb = item.thumbnail || item.enclosure?.link || '';
+
+        // Clean up tags: remove slug-like strings (no spaces, very long, or contain urls)
+        const tags = (item.categories || [])
+          .filter(t => t.length < 30 && !t.includes('/') && /\s/.test(t) || t.split(/(?=[A-Z])/).length > 1 || t.length < 20)
+          .map(t => t.replace(/([a-z])([A-Z])/g, '$1 $2')) // split camelCase
+          .slice(0, 2);
+
+        return `
+          <a class="card" href="${item.link}" target="_blank" rel="noopener noreferrer">
+            ${thumb ? `<div class="card-img"><img src="${thumb}" alt="${item.title}" loading="lazy" /></div>` : '<div class="card-img card-img--placeholder"></div>'}
+            <div class="card-body">
+              ${tags.length ? `<div class="tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+              <h3 class="card-title">${item.title}</h3>
+              <p class="card-desc">${desc}</p>
+              <span class="card-date">${date}</span>
+            </div>
+          </a>`;
+      }).join('');
+    } catch (e) {
+      container.innerHTML = `
+        <p class="error">
+          Couldn't load articles. Make sure your Medium username is set correctly,
+          or check your RSS feed at <code>medium.com/feed/@${username}</code>.
+        </p>`;
+    }
+  }
+  loadArticles();
+</script>
+
+<style>
+  .articles {
+    padding: 5rem 0 4rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Grid: 2 cols on desktop, 1 on mobile */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .card:hover .card-title { color: var(--accent); }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--border);
+  }
+
+  .card-img--placeholder {
+    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+  }
+
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .card:hover .card-img img { transform: scale(1.04); }
+
+  .card-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+  }
+
+  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  .tag {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+
+  .card-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .card-date {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  /* Loading dots */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 3rem;
+    grid-column: 1 / -1;
+  }
+
+  .dot {
+    width: 6px; height: 6px;
+    background: var(--muted);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  .error {
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    grid-column: 1 / -1;
+  }
+  .error code { color: var(--accent); font-size: 0.8rem; }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+  }
+  .view-all:hover { opacity: 0.7; }
+</style>
